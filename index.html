@@ -1,0 +1,2358 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sajda Boutique | Elegant & Modern Fashion</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,450;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf8f6',
+                            100: '#fbe8e1',
+                            500: '#b85d43',
+                            600: '#9e4a32',
+                            700: '#803a27',
+                            900: '#5c291c',
+                        },
+                        lux: {
+                            dark: '#1a1818',
+                            light: '#faf8f5',
+                            gold: '#c5a059',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #faf8f5; color: #1a1818; }
+        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+        /* Custom scrollbar for mobile sleekness */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 4px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-y-[-150%] transition-transform duration-300 bg-lux-dark text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-lux-gold/35">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-lux-gold text-lg"></i>
+        <span id="toast-msg" class="text-sm font-medium">Item added to cart successfully!</span>
+    </div>
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-lux-dark text-lux-gold text-xs py-2 px-4 text-center font-medium tracking-wide flex justify-between items-center">
+        <span>✨ Complimentary Shipping on Orders Over ₹2,999 | Direct WhatsApp Ordering Available</span>
+        <span id="top-contact-info" class="hidden md:inline">Contact: +91 98765 43210</span>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Mobile Menu Toggle -->
+            <button onclick="toggleMobileMenu()" class="md:hidden text-lux-dark text-xl p-2 focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Brand Logo -->
+            <a href="#" onclick="router('home')" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-white font-serif font-bold text-xl shadow-md group-hover:bg-brand-600 transition">S</div>
+                <div class="flex flex-col">
+                    <span class="font-serif font-bold text-xl tracking-wider text-lux-dark uppercase">Sajda</span>
+                    <span class="text-[9px] tracking-[0.25em] text-brand-500 uppercase font-semibold -mt-1">Boutique</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm text-stone-700">
+                <a href="#" onclick="router('home')" class="hover:text-brand-500 transition">Home</a>
+                <a href="#" onclick="router('shop')" class="hover:text-brand-500 transition">Shop All</a>
+                <a href="#" onclick="router('categories')" class="hover:text-brand-500 transition">Categories</a>
+                <a href="#" onclick="router('about')" class="hover:text-brand-500 transition">About Us</a>
+                <a href="#" onclick="router('contact')" class="hover:text-brand-500 transition">Contact</a>
+            </nav>
+
+            <!-- Right Actions (Search, Cart, Admin) -->
+            <div class="flex items-center gap-4">
+                <button onclick="router('shop')" class="text-stone-700 hover:text-brand-500 p-2 text-lg">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button onclick="router('cart')" class="relative text-stone-700 hover:text-brand-500 p-2 text-lg">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span id="cart-badge" class="absolute top-0 right-0 bg-brand-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
+                </button>
+                <button onclick="openAdminAuth()" class="hidden sm:flex items-center gap-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs px-3 py-2 rounded-lg font-semibold transition border border-stone-300">
+                    <i class="fa-solid fa-lock text-[10px]"></i> Admin
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Slide-over Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden transition-opacity">
+        <div class="absolute left-0 top-0 bottom-0 w-4/5 max-w-sm bg-white shadow-2xl p-6 flex flex-col justify-between transform -translate-x-full transition-transform duration-300" id="mobile-drawer">
+            <div>
+                <div class="flex items-center justify-between pb-6 border-b border-stone-200">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-serif font-bold text-lg">S</div>
+                        <span class="font-serif font-bold text-lg tracking-wider text-lux-dark">Sajda Boutique</span>
+                    </div>
+                    <button onclick="toggleMobileMenu()" class="text-stone-500 hover:text-stone-800 text-xl"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="flex flex-col gap-4 mt-6 font-medium text-stone-800">
+                    <a href="#" onclick="router('home'); toggleMobileMenu();" class="py-2 border-b border-stone-100 flex justify-between items-center">Home <i class="fa-solid fa-chevron-right text-xs text-stone-400"></i></a>
+                    <a href="#" onclick="router('shop'); toggleMobileMenu();" class="py-2 border-b border-stone-100 flex justify-between items-center">Shop All Products <i class="fa-solid fa-chevron-right text-xs text-stone-400"></i></a>
+                    <a href="#" onclick="router('categories'); toggleMobileMenu();" class="py-2 border-b border-stone-100 flex justify-between items-center">Categories <i class="fa-solid fa-chevron-right text-xs text-stone-400"></i></a>
+                    <a href="#" onclick="router('about'); toggleMobileMenu();" class="py-2 border-b border-stone-100 flex justify-between items-center">About Us <i class="fa-solid fa-chevron-right text-xs text-stone-400"></i></a>
+                    <a href="#" onclick="router('contact'); toggleMobileMenu();" class="py-2 border-b border-stone-100 flex justify-between items-center">Contact Us <i class="fa-solid fa-chevron-right text-xs text-stone-400"></i></a>
+                </div>
+            </div>
+            <div class="pt-6 border-t border-stone-200 flex flex-col gap-3">
+                <button onclick="toggleMobileMenu(); openAdminAuth();" class="w-full py-3 bg-lux-dark text-white rounded-xl font-medium text-sm flex items-center justify-center gap-2 shadow">
+                    <i class="fa-solid fa-lock text-xs"></i> Admin Portal
+                </button>
+                <div class="text-center text-xs text-stone-500">Need help? WhatsApp Us</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dynamic Application Container -->
+    <main id="main-content" class="flex-grow">
+        <!-- Views will be dynamically injected here -->
+    </main>
+
+    <!-- Floating WhatsApp Direct Button -->
+    <div class="fixed bottom-6 right-6 z-30">
+        <button onclick="openWhatsAppDirect()" class="bg-emerald-600 hover:bg-emerald-700 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl text-2xl transition hover:scale-110 active:scale-95 group relative" title="Chat on WhatsApp">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span class="absolute right-16 bg-lux-dark text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-md opacity-0 group-hover:opacity-100 transition pointer-events-none font-medium">Chat with Stylist</span>
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-lux-dark text-stone-300 pt-16 pb-12 border-t border-stone-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            <div>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-serif font-bold text-lg">S</div>
+                    <span class="font-serif font-bold text-xl tracking-wider text-white">Sajda Boutique</span>
+                </div>
+                <p class="text-xs text-stone-400 leading-relaxed mb-4" id="footer-about-text">
+                    Curated luxury, ethnic elegance, and modern silhouettes crafted for the contemporary woman. Experience fashion that tells your unique story.
+                </p>
+                <div class="flex gap-4 text-stone-400 text-lg">
+                    <a href="#" class="hover:text-lux-gold transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-lux-gold transition"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" onclick="openWhatsAppDirect()" class="hover:text-emerald-500 transition"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-serif text-white text-base mb-4 tracking-wider uppercase">Quick Links</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#" onclick="router('home')" class="hover:text-lux-gold transition">Home</a></li>
+                    <li><a href="#" onclick="router('shop')" class="hover:text-lux-gold transition">All Collections</a></li>
+                    <li><a href="#" onclick="router('categories')" class="hover:text-lux-gold transition">Categories</a></li>
+                    <li><a href="#" onclick="router('about')" class="hover:text-lux-gold transition">Our Heritage (About Us)</a></li>
+                    <li><a href="#" onclick="router('contact')" class="hover:text-lux-gold transition">Get in Touch</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-serif text-white text-base mb-4 tracking-wider uppercase">Customer Care</h4>
+                <ul class="space-y-2 text-xs text-stone-400">
+                    <li><span class="text-stone-200 font-medium">WhatsApp Ordering:</span> Instant confirmation</li>
+                    <li><span class="text-stone-200 font-medium">Shipping:</span> Pan India Express Delivery</li>
+                    <li><span class="text-stone-200 font-medium">Returns:</span> 7-Day Easy Exchange Policy</li>
+                    <li><a href="#" onclick="openAdminAuth()" class="text-lux-gold hover:underline mt-2 inline-block"><i class="fa-solid fa-lock text-[10px] mr-1"></i> Owner / Admin Portal</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-serif text-white text-base mb-4 tracking-wider uppercase">Visit / Contact</h4>
+                <p class="text-xs text-stone-400 leading-relaxed mb-2" id="footer-address">
+                    Shop No. 14, Royal Crown Plaza, Main Market, Jaipur, Rajasthan - 302001
+                </p>
+                <p class="text-xs text-stone-400 mb-1"><strong class="text-stone-200">Phone:</strong> <span id="footer-phone">+91 98765 43210</span></p>
+                <p class="text-xs text-stone-400"><strong class="text-stone-200">Hours:</strong> <span id="footer-hours">Mon - Sat: 10:00 AM - 8:30 PM</span></p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-stone-800/60 text-center text-xs text-stone-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>&copy; 2026 Sajda Boutique. All Rights Reserved.</p>
+            <p class="text-stone-400">Designed with elegance & premium fashion sensibilities.</p>
+        </div>
+    </footer>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-auth-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl border border-stone-200 relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeAdminAuth()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-700 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-full bg-lux-dark text-lux-gold mx-auto flex items-center justify-center text-xl mb-3 shadow">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="font-serif text-2xl font-bold text-lux-dark">Admin Portal Access</h3>
+                <p class="text-xs text-stone-500 mt-1">Authorized boutique owner login only</p>
+            </div>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Username</label>
+                    <input type="text" id="admin-user" required class="w-full px-4 py-3 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" placeholder="admin">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Password</label>
+                    <input type="password" id="admin-pass" required class="w-full px-4 py-3 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-3 rounded-xl transition shadow-lg text-sm tracking-wide">
+                    Authenticate & Access Panel
+                </button>
+                <div class="text-center mt-2">
+                    <span class="text-[11px] text-stone-400">Demo Credentials: admin / sajda2026</span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Core -->
+    <script>
+        /* --- DEFAULT DATA SEEDING --- */
+        const defaultSettings = {
+            boutiqueName: "Sajda Boutique",
+            whatsappNumber: "919876543210",
+            contactNumber: "+91 98765 43210",
+            instagram: "@sajdaboutique",
+            address: "Shop No. 14, Royal Crown Plaza, Main Market, Jaipur, Rajasthan - 302001",
+            businessHours: "Mon - Sat: 10:00 AM - 8:30 PM",
+            aboutText: "Curated luxury, ethnic elegance, and modern silhouettes crafted for the contemporary woman. Experience fashion that tells your unique story."
+        };
+
+        const defaultCategories = [
+            "Anarkali Suits",
+            "Designer Lehengas",
+            "Kurti Sets",
+            "Sarees & Gowns",
+            "Indo-Western Fusion"
+        ];
+
+        const defaultProducts = [
+            {
+                id: "p1",
+                name: "Royal Crimson Velvet Anarkali",
+                category: "Anarkali Suits",
+                price: 8499,
+                discountPrice: 6999,
+                image: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80&w=800",
+                description: "Exquisite deep crimson pure velvet anarkali featuring intricate zardozi embroidery on the yoke and cuffs. Paired with a heavily embroidered organza dupatta.",
+                sizes: ["XS", "S", "M", "L", "XL"],
+                colors: ["Crimson Red", "Deep Maroon", "Royal Blue"],
+                stock: 12,
+                isFeatured: true,
+                isNew: true
+            },
+            {
+                id: "p2",
+                name: "Blush Pink Organza Floral Lehenga",
+                category: "Designer Lehengas",
+                price: 15999,
+                discountPrice: 12999,
+                image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=800",
+                description: "Dreamy pastel pink organza lehenga set embellished with hand-painted botanical florals and delicate pearl beadwork.",
+                sizes: ["S", "M", "L"],
+                colors: ["Blush Pink", "Mint Green", "Ivory"],
+                stock: 5,
+                isFeatured: true,
+                isNew: false
+            },
+            {
+                id: "p3",
+                name: "Emerald Chanderi Silk Kurti Set",
+                category: "Kurti Sets",
+                price: 3499,
+                discountPrice: 2899,
+                image: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&q=80&w=800",
+                description: "Luxurious emerald green chanderi silk straight kurti paired with matching trousers and a zari-bordered dupatta.",
+                sizes: ["S", "M", "L", "XL", "XXL"],
+                colors: ["Emerald Green", "Mustard Yellow", "Sapphire Blue"],
+                stock: 20,
+                isFeatured: false,
+                isNew: true
+            },
+            {
+                id: "p4",
+                name: "Ivory Gold Tissue Silk Saree",
+                category: "Sarees & Gowns",
+                price: 11500,
+                discountPrice: 9499,
+                image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=800",
+                description: "Handwoven tissue silk saree in radiant ivory and gold tones. Comes with an unstitched brocade silk blouse piece.",
+                sizes: ["Free Size"],
+                colors: ["Ivory Gold", "Champagne Rose"],
+                stock: 8,
+                isFeatured: true,
+                isNew: false
+            },
+            {
+                id: "p5",
+                name: "Midnight Blue Indo-Western Peplum Set",
+                category: "Indo-Western Fusion",
+                price: 6799,
+                discountPrice: 5499,
+                image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&q=80&w=800",
+                description: "Modern asymmetrical peplum top paired with sharara pants in rich georgette fabric, highlighted with sequin highlights.",
+                sizes: ["XS", "S", "M", "L"],
+                colors: ["Midnight Blue", "Slate Grey"],
+                stock: 14,
+                isFeatured: false,
+                isNew: true
+            },
+            {
+                id: "p6",
+                name: "Sunshine Yellow Sharara Suit",
+                category: "Kurti Sets",
+                price: 4999,
+                discountPrice: 3999,
+                image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=800",
+                description: "Vibrant yellow short kurti with heavy gota-patti work paired with flared double-layer sharara pants.",
+                sizes: ["S", "M", "L", "XL"],
+                colors: ["Sunshine Yellow", "Coral Peach"],
+                stock: 10,
+                isFeatured: true,
+                isNew: false
+            },
+            {
+                id: "p7",
+                name: "Teal Blue Embroidered Party Gown",
+                category: "Sarees & Gowns",
+                price: 9999,
+                discountPrice: 7999,
+                image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&q=80&w=800",
+                description: "Floor-length flowing georgette gown in captivating teal blue with intricate thread and silver glass bead embellishments.",
+                sizes: ["S", "M", "L", "XL"],
+                colors: ["Teal Blue", "Wine Purple"],
+                stock: 7,
+                isFeatured: false,
+                isNew: true
+            },
+            {
+                id: "p8",
+                name: "Pastel Mint Georgette Anarkali",
+                category: "Anarkali Suits",
+                price: 5999,
+                discountPrice: 4799,
+                image: "https://images.unsplash.com/photo-1550639525-c97d455acf70?auto=format&fit=crop&q=80&w=800",
+                description: "Graceful mint green tiered anarkali suit crafted from breathable micro-georgette, ideal for daytime celebrations.",
+                sizes: ["XS", "S", "M", "L"],
+                colors: ["Mint Green", "Lavender", "Dusty Rose"],
+                stock: 15,
+                isFeatured: false,
+                isNew: false
+            },
+            {
+                id: "p9",
+                name: "Royal Maroon Velvet Lehenga",
+                category: "Designer Lehengas",
+                price: 21999,
+                discountPrice: 18499,
+                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=800",
+                description: "Bridal-grade deep maroon heavy velvet lehenga adorned with antique gold dabka and stone embroidery.",
+                sizes: ["S", "M", "L"],
+                colors: ["Royal Maroon", "Classic Red"],
+                stock: 3,
+                isFeatured: true,
+                isNew: true
+            },
+            {
+                id: "p10",
+                name: "Peach Floral Tiered Maxi Dress",
+                category: "Indo-Western Fusion",
+                price: 3899,
+                discountPrice: 3199,
+                image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&q=80&w=800",
+                description: "Effortless fusion maxi dress with delicate floral prints, ruffle details, and a cinched waistline.",
+                sizes: ["XS", "S", "M", "L", "XL"],
+                colors: ["Peach Floral", "Sky Blue Floral"],
+                stock: 18,
+                isFeatured: false,
+                isNew: false
+            },
+            {
+                id: "p11",
+                name: "Classic Black Banarasi Silk Saree",
+                category: "Sarees & Gowns",
+                price: 13999,
+                discountPrice: 10999,
+                image: "https://images.unsplash.com/photo-1589465885164-255da3494723?auto=format&fit=crop&q=80&w=800",
+                description: "Timeless black pure banarasi katan silk saree featuring intricate gold zari floral jaal weaving throughout.",
+                sizes: ["Free Size"],
+                colors: ["Black Gold", "Charcoal Silver"],
+                stock: 6,
+                isFeatured: true,
+                isNew: false
+            },
+            {
+                id: "p12",
+                name: "Lavender Organza Suit Set",
+                category: "Kurti Sets",
+                price: 4599,
+                discountPrice: 3799,
+                image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800",
+                description: "Ethereal lavender organza short kurti paired with scalloped pants and a lightweight matching dupatta.",
+                sizes: ["S", "M", "L", "XL"],
+                colors: ["Lavender", "Dusty Mauve"],
+                stock: 11,
+                isFeatured: false,
+                isNew: true
+            }
+        ];
+
+        // Initialize Local Storage if missing
+        if (!localStorage.getItem('sajda_settings')) {
+            localStorage.setItem('sajda_settings', JSON.stringify(defaultSettings));
+        }
+        if (!localStorage.getItem('sajda_categories')) {
+            localStorage.setItem('sajda_categories', JSON.stringify(defaultCategories));
+        }
+        if (!localStorage.getItem('sajda_products')) {
+            localStorage.setItem('sajda_products', JSON.stringify(defaultProducts));
+        }
+        if (!localStorage.getItem('sajda_cart')) {
+            localStorage.setItem('sajda_cart', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('sajda_orders')) {
+            localStorage.setItem('sajda_orders', JSON.stringify([]));
+        }
+
+        /* --- STATE HELPERS --- */
+        function getSettings() { return JSON.parse(localStorage.getItem('sajda_settings')); }
+        function getCategories() { return JSON.parse(localStorage.getItem('sajda_categories')); }
+        function getProducts() { return JSON.parse(localStorage.getItem('sajda_products')); }
+        function getCart() { return JSON.parse(localStorage.getItem('sajda_cart')); }
+        function getOrders() { return JSON.parse(localStorage.getItem('sajda_orders')); }
+
+        function saveCart(cart) {
+            localStorage.setItem('sajda_cart', JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const cart = getCart();
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cart-badge');
+            if (badge) badge.innerText = totalCount;
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const icon = document.getElementById('toast-icon');
+            toastMsg.innerText = msg;
+            if(isError) {
+                icon.className = "fa-solid fa-circle-exclamation text-red-500 text-lg";
+                toast.classList.remove('border-lux-gold/35');
+                toast.classList.add('border-red-500/50');
+            } else {
+                icon.className = "fa-solid fa-circle-check text-lux-gold text-lg";
+                toast.classList.remove('border-red-500/50');
+                toast.classList.add('border-lux-gold/35');
+            }
+            toast.classList.remove('translate-y-[-150%]');
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-150%]');
+            }, 3000);
+        }
+
+        // Apply global settings to UI elements
+        function applySettings() {
+            const s = getSettings();
+            if(document.getElementById('footer-about-text')) document.getElementById('footer-about-text').innerText = s.aboutText;
+            if(document.getElementById('footer-address')) document.getElementById('footer-address').innerText = s.address;
+            if(document.getElementById('footer-phone')) document.getElementById('footer-phone').innerText = s.contactNumber;
+            if(document.getElementById('footer-hours')) document.getElementById('footer-hours').innerText = s.businessHours;
+            if(document.getElementById('top-contact-info')) document.getElementById('top-contact-info').innerText = "Contact: " + s.contactNumber;
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const drawer = document.getElementById('mobile-drawer');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                setTimeout(() => drawer.classList.remove('-translate-x-full'), 10);
+            } else {
+                drawer.classList.add('-translate-x-full');
+                setTimeout(() => menu.classList.add('hidden'), 300);
+            }
+        }
+
+        function formatINR(amount) {
+            return '₹' + Number(amount).toLocaleString('en-IN');
+        }
+
+        /* --- ROUTER SYSTEM --- */
+        let currentRoute = 'home';
+        let routeParam = null;
+
+        function router(route, param = null) {
+            currentRoute = route;
+            routeParam = param;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            renderView();
+        }
+
+        function renderView() {
+            const main = document.getElementById('main-content');
+            applySettings();
+            
+            switch(currentRoute) {
+                case 'home':
+                    main.innerHTML = renderHomeView();
+                    break;
+                case 'shop':
+                    main.innerHTML = renderShopView();
+                    initShopFilters();
+                    break;
+                case 'categories':
+                    main.innerHTML = renderCategoriesView();
+                    break;
+                case 'product-detail':
+                    main.innerHTML = renderProductDetailView(routeParam);
+                    break;
+                case 'cart':
+                    main.innerHTML = renderCartView();
+                    break;
+                case 'checkout':
+                    main.innerHTML = renderCheckoutView();
+                    break;
+                case 'order-confirmation':
+                    main.innerHTML = renderOrderConfirmationView(routeParam);
+                    break;
+                case 'about':
+                    main.innerHTML = renderAboutView();
+                    break;
+                case 'contact':
+                    main.innerHTML = renderContactView();
+                    break;
+                case 'admin':
+                    if (sessionStorage.getItem('sajda_admin_auth') === 'true') {
+                        main.innerHTML = renderAdminDashboard();
+                        initAdminDashboard();
+                    } else {
+                        router('home');
+                        openAdminAuth();
+                    }
+                    break;
+                default:
+                    main.innerHTML = renderHomeView();
+            }
+            updateCartBadge();
+        }
+
+        /* --- VIEW 1: HOME --- */
+        function renderHomeView() {
+            const products = getProducts();
+            const featured = products.filter(p => p.isFeatured).slice(0, 4);
+            const newArrivals = products.filter(p => p.isNew).slice(0, 4);
+            const categories = getCategories();
+
+            return `
+                <!-- Hero Section -->
+                <section class="relative bg-lux-dark text-white overflow-hidden py-20 lg:py-28">
+                    <div class="absolute inset-0 opacity-40 mix-blend-overlay">
+                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1600" alt="Boutique Hero" class="w-full h-full object-cover">
+                    </div>
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div class="space-y-6 text-center lg:text-left">
+                            <span class="inline-block bg-lux-gold/20 text-lux-gold text-xs font-bold uppercase tracking-[0.3em] px-3.5 py-1.5 rounded-full border border-lux-gold/40">Festive & Wedding Edit 2026</span>
+                            <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                                Elegance Woven In <span class="italic text-lux-gold font-normal">Every Thread</span>
+                            </h1>
+                            <p class="text-stone-300 text-sm sm:text-base max-w-lg mx-auto lg:mx-0 font-light leading-relaxed">
+                                Discover majestic Anarkalis, handcrafted lehengas, and contemporary ethnic wear designed exclusively for the modern connoisseur of fashion.
+                            </p>
+                            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                                <button onclick="router('shop')" class="w-full sm:w-auto bg-brand-500 hover:bg-brand-600 text-white font-medium px-8 py-4 rounded-xl shadow-xl transition tracking-wider uppercase text-xs">
+                                    Explore Collection
+                                </button>
+                                <button onclick="openWhatsAppDirect()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-8 py-4 rounded-xl shadow-xl transition tracking-wider uppercase text-xs flex items-center justify-center gap-2">
+                                    <i class="fa-brands fa-whatsapp text-base"></i> Order via WhatsApp
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative hidden lg:block">
+                            <div class="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10">
+                                <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80&w=800" alt="Featured Outfit" class="w-full h-full object-cover hover:scale-105 transition duration-700">
+                            </div>
+                            <div class="absolute -bottom-6 -left-6 bg-white text-lux-dark p-6 rounded-2xl shadow-2xl max-w-xs border border-stone-200">
+                                <div class="flex items-center gap-2 text-lux-gold text-sm mb-1">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="font-serif font-bold text-sm">"Absolute luxury and premium stitch quality. Loved my shopping experience!"</p>
+                                <span class="text-[11px] text-stone-500 mt-2 block">- Ananya R., Verified Patron</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Value Proposition Badges -->
+                <section class="bg-stone-100 py-8 border-y border-stone-200">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                        <div class="flex flex-col items-center p-3">
+                            <div class="w-12 h-12 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-xl mb-3"><i class="fa-solid fa-gem"></i></div>
+                            <h4 class="font-serif font-bold text-sm text-lux-dark">100% Handcrafted</h4>
+                            <p class="text-xs text-stone-500 mt-1">Authentic artisanal craftsmanship</p>
+                        </div>
+                        <div class="flex flex-col items-center p-3">
+                            <div class="w-12 h-12 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-xl mb-3"><i class="fa-solid fa-truck-fast"></i></div>
+                            <h4 class="font-serif font-bold text-sm text-lux-dark">Pan India Delivery</h4>
+                            <p class="text-xs text-stone-500 mt-1">Fast & secure shipping</p>
+                        </div>
+                        <div class="flex flex-col items-center p-3">
+                            <div class="w-12 h-12 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-xl mb-3"><i class="fa-solid fa-headset"></i></div>
+                            <h4 class="font-serif font-bold text-sm text-lux-dark">WhatsApp Support</h4>
+                            <p class="text-xs text-stone-500 mt-1">Instant stylist assistance</p>
+                        </div>
+                        <div class="flex flex-col items-center p-3">
+                            <div class="w-12 h-12 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-xl mb-3"><i class="fa-solid fa-shield-heart"></i></div>
+                            <h4 class="font-serif font-bold text-sm text-lux-dark">Boutique Quality</h4>
+                            <p class="text-xs text-stone-500 mt-1">Premium fabrics & precise fits</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Featured Categories Quick Grid -->
+                <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-2xl mx-auto mb-12">
+                        <span class="text-brand-500 text-xs font-bold uppercase tracking-[0.25em] block mb-2">Curated Collections</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-lux-dark">Shop By Category</h2>
+                        <div class="w-16 h-0.5 bg-lux-gold mx-auto mt-3"></div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6">
+                        ${categories.map(cat => `
+                            <div onclick="router('shop', '${cat}')" class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer aspect-[3/4] bg-stone-900">
+                                <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=600" alt="${cat}" class="w-full h-full object-cover opacity-75 group-hover:scale-110 group-hover:opacity-90 transition duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 text-center">
+                                    <h3 class="font-serif text-white font-bold text-sm sm:text-base group-hover:text-lux-gold transition">${cat}</h3>
+                                    <span class="text-[11px] text-stone-300 mt-1 uppercase tracking-wider">Explore <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <!-- Featured Products Carousel / Grid -->
+                <section class="py-16 bg-white border-y border-stone-200">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex justify-between items-end mb-12">
+                            <div>
+                                <span class="text-brand-500 text-xs font-bold uppercase tracking-[0.25em] block mb-2">Handpicked For You</span>
+                                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-lux-dark">Featured Masterpieces</h2>
+                            </div>
+                            <button onclick="router('shop')" class="text-xs font-bold uppercase tracking-widest text-brand-500 hover:text-brand-700 transition flex items-center gap-1">
+                                View All (${products.length}) <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            ${featured.map(p => renderProductCard(p)).join('')}
+                        </div>
+                    </div>
+                </section>
+
+                <!-- New Arrivals Banner -->
+                <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="bg-lux-dark text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl">
+                        <div class="absolute -right-20 -bottom-20 opacity-20 w-96 h-96 rounded-full bg-lux-gold blur-3xl pointer-events-none"></div>
+                        <div class="relative z-10 max-w-xl">
+                            <span class="bg-brand-500 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Just Dropped</span>
+                            <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-4 mb-3">The Spring-Summer Wedding & Festive Collection</h2>
+                            <p class="text-stone-300 text-sm mb-6 font-light">Hand-embroidered silhouettes crafted with breathable silks, organza, and rich jewel tones.</p>
+                            <button onclick="router('shop')" class="bg-lux-gold hover:bg-amber-600 text-lux-dark font-bold px-8 py-3.5 rounded-xl transition text-xs uppercase tracking-widest shadow">
+                                Shop New Arrivals
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        /* --- PRODUCT CARD COMPONENT --- */
+        function renderProductCard(p) {
+            const hasDiscount = p.discountPrice && p.discountPrice < p.price;
+            const discountPercent = hasDiscount ? Math.round(((p.price - p.discountPrice) / p.price) * 100) : 0;
+            
+            return `
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-stone-200 flex flex-col justify-between">
+                    <div>
+                        <div class="relative aspect-[3/4] overflow-hidden bg-stone-100 cursor-pointer" onclick="router('product-detail', '${p.id}')">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div class="absolute top-3 left-3 flex flex-col gap-1">
+                                ${p.isNew ? '<span class="bg-lux-dark text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow">New</span>' : ''}
+                                ${hasDiscount ? `<span class="bg-brand-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow">-${discountPercent}%</span>` : ''}
+                            </div>
+                            <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="event.stopPropagation(); quickAddToCart('${p.id}')" class="bg-white text-lux-dark hover:bg-brand-500 hover:text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center transition">
+                                    <i class="fa-solid fa-plus text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <span class="text-[11px] text-stone-400 uppercase tracking-widest block mb-1">${p.category}</span>
+                            <h3 onclick="router('product-detail', '${p.id}')" class="font-serif font-bold text-base text-lux-dark hover:text-brand-500 cursor-pointer transition line-clamp-1">${p.name}</h3>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="font-bold text-brand-600 text-base">${formatINR(hasDiscount ? p.discountPrice : p.price)}</span>
+                                ${hasDiscount ? `<span class="text-xs text-stone-400 line-through">${formatINR(p.price)}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4 pt-0 flex gap-2">
+                        <button onclick="router('product-detail', '${p.id}')" class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-800 py-2.5 rounded-xl font-medium text-xs transition">
+                            View Details
+                        </button>
+                        <button onclick="quickOrderWhatsApp('${p.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2.5 rounded-xl font-medium text-xs transition" title="Order via WhatsApp">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* --- VIEW 2: SHOP / ALL PRODUCTS --- */
+        function renderShopView() {
+            const categories = getCategories();
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                    <!-- Page Breadcrumb / Title -->
+                    <div class="mb-8 border-b border-stone-200 pb-6">
+                        <span class="text-brand-500 text-xs font-bold uppercase tracking-[0.25em] block mb-1">Sajda Boutique Catalog</span>
+                        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-lux-dark">All Fashion Collections</h1>
+                        <p class="text-xs text-stone-500 mt-1">Discover handcrafted ethnic & contemporary ensembles tailored to perfection.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                        <!-- Filters Sidebar -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-200 space-y-6 h-fit">
+                            <div class="flex items-center justify-between border-b border-stone-200 pb-4">
+                                <h3 class="font-serif font-bold text-lg text-lux-dark">Filters</h3>
+                                <button onclick="resetFilters()" class="text-xs text-brand-500 hover:underline">Reset All</button>
+                            </div>
+
+                            <!-- Search Filter -->
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-2">Search Product</label>
+                                <div class="relative">
+                                    <input type="text" id="filter-search" oninput="applyFilters()" placeholder="Search name or style..." class="w-full pl-9 pr-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-brand-500">
+                                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-stone-400 text-xs"></i>
+                                </div>
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-2">Category</label>
+                                <div class="space-y-2" id="filter-category-container">
+                                    <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer">
+                                        <input type="radio" name="category" value="all" checked onchange="applyFilters()" class="accent-brand-500"> All Categories
+                                    </label>
+                                    ${categories.map(cat => `
+                                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer">
+                                            <input type="radio" name="category" value="${cat}" onchange="applyFilters()" class="accent-brand-500"> ${cat}
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <!-- Price Filter -->
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-2">Max Price: <span id="price-val" class="text-brand-600 font-bold">₹25,000</span></label>
+                                <input type="range" id="filter-price" min="1000" max="25000" step="500" value="25000" oninput="applyFilters()" class="w-full accent-brand-500">
+                            </div>
+
+                            <!-- Size Filter -->
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-2">Size</label>
+                                <div class="flex flex-wrap gap-2" id="filter-sizes">
+                                    ${['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size'].map(size => `
+                                        <button onclick="toggleSizeFilter('${size}', this)" class="size-filter-btn px-3 py-1.5 rounded-lg border border-stone-300 text-xs text-stone-700 font-medium hover:border-brand-500 transition" data-size="${size}">${size}</button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Grid Area -->
+                        <div class="lg:col-span-3 space-y-6">
+                            <!-- Sorting & Count Header -->
+                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-stone-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <span id="product-count-label" class="text-xs font-semibold text-stone-600">Showing all products</span>
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs text-stone-500 whitespace-nowrap">Sort by:</label>
+                                    <select id="filter-sort" onchange="applyFilters()" class="bg-stone-50 border border-stone-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-brand-500">
+                                        <option value="newest">Newest Arrivals</option>
+                                        <option value="price-low">Price: Low to High</option>
+                                        <option value="price-high">Price: High to Low</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Products Grid -->
+                            <div id="shop-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <!-- Dynamic products injected here -->
+                            </div>
+
+                            <!-- Empty State -->
+                            <div id="shop-empty-state" class="hidden text-center py-20 bg-white rounded-2xl border border-stone-200">
+                                <div class="w-16 h-16 rounded-full bg-stone-100 text-stone-400 mx-auto flex items-center justify-center text-2xl mb-4"><i class="fa-solid fa-shirt"></i></div>
+                                <h3 class="font-serif text-xl font-bold text-lux-dark">No Products Found</h3>
+                                <p class="text-xs text-stone-500 mt-1 mb-6">Try adjusting your search criteria or filters.</p>
+                                <button onclick="resetFilters()" class="bg-brand-500 text-white px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider font-medium">Reset Filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        let selectedSizeFilter = null;
+        function toggleSizeFilter(size, btn) {
+            if (selectedSizeFilter === size) {
+                selectedSizeFilter = null;
+                btn.classList.remove('bg-brand-500', 'text-white', 'border-brand-500');
+                btn.classList.add('border-stone-300', 'text-stone-700');
+            } else {
+                document.querySelectorAll('.size-filter-btn').forEach(b => {
+                    b.classList.remove('bg-brand-500', 'text-white', 'border-brand-500');
+                    b.classList.add('border-stone-300', 'text-stone-700');
+                });
+                selectedSizeFilter = size;
+                btn.classList.add('bg-brand-500', 'text-white', 'border-brand-500');
+                btn.classList.remove('border-stone-300', 'text-stone-700');
+            }
+            applyFilters();
+        }
+
+        function initShopFilters() {
+            if (routeParam) {
+                // If category was passed as routeParam
+                const radios = document.querySelectorAll('input[name="category"]');
+                radios.forEach(r => {
+                    if (r.value === routeParam) {
+                        r.checked = true;
+                    }
+                });
+            }
+            applyFilters();
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-search').value = '';
+            document.querySelector('input[name="category"][value="all"]').checked = true;
+            document.getElementById('filter-price').value = 25000;
+            document.getElementById('filter-sort').value = 'newest';
+            selectedSizeFilter = null;
+            document.querySelectorAll('.size-filter-btn').forEach(b => {
+                b.classList.remove('bg-brand-500', 'text-white', 'border-brand-500');
+                b.classList.add('border-stone-300', 'text-stone-700');
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const products = getProducts();
+            const search = document.getElementById('filter-search')?.value.toLowerCase() || '';
+            const catRadio = document.querySelector('input[name="category"]:checked');
+            const category = catRadio ? catRadio.value : 'all';
+            const maxPrice = Number(document.getElementById('filter-price')?.value || 25000);
+            const sort = document.getElementById('filter-sort')?.value || 'newest';
+
+            if(document.getElementById('price-val')) {
+                document.getElementById('price-val').innerText = formatINR(maxPrice);
+            }
+
+            let filtered = products.filter(p => {
+                const effectivePrice = (p.discountPrice && p.discountPrice < p.price) ? p.discountPrice : p.price;
+                const matchesSearch = p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search);
+                const matchesCat = (category === 'all' || p.category === category);
+                const matchesPrice = effectivePrice <= maxPrice;
+                const matchesSize = (!selectedSizeFilter || (p.sizes && p.sizes.includes(selectedSizeFilter)));
+                return matchesSearch && matchesCat && matchesPrice && matchesSize;
+            });
+
+            // Sorting
+            if (sort === 'price-low') {
+                filtered.sort((a,b) => ((a.discountPrice || a.price) - (b.discountPrice || b.price)));
+            } else if (sort === 'price-high') {
+                filtered.sort((a,b) => ((b.discountPrice || b.price) - (a.discountPrice || a.price)));
+            } else {
+                // newest
+                filtered.sort((a,b) => (b.isNew === true ? 1 : 0) - (a.isNew === true ? 1 : 0));
+            }
+
+            const grid = document.getElementById('shop-products-grid');
+            const emptyState = document.getElementById('shop-empty-state');
+            const countLabel = document.getElementById('product-count-label');
+
+            if (countLabel) countLabel.innerText = `Showing ${filtered.length} products`;
+
+            if (grid && emptyState) {
+                if (filtered.length === 0) {
+                    grid.innerHTML = '';
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    grid.innerHTML = filtered.map(p => renderProductCard(p)).join('');
+                }
+            }
+        }
+
+        /* --- VIEW 3: CATEGORIES --- */
+        function renderCategoriesView() {
+            const categories = getCategories();
+            const products = getProducts();
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="text-center max-w-2xl mx-auto mb-12">
+                        <span class="text-brand-500 text-xs font-bold uppercase tracking-[0.25em] block mb-2">Boutique Directory</span>
+                        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-lux-dark">Explore Categories</h1>
+                        <p class="text-xs text-stone-500 mt-2">Browse our exclusive lineup of handcrafted ethnic and fusion wear categories.</p>
+                        <div class="w-16 h-0.5 bg-lux-gold mx-auto mt-4"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        ${categories.map(cat => {
+                            const count = products.filter(p => p.category === cat).length;
+                            return `
+                                <div onclick="router('shop', '${cat}')" class="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition duration-500 cursor-pointer border border-stone-200">
+                                    <div class="aspect-[16/10] overflow-hidden relative">
+                                        <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80&w=800" alt="${cat}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+                                        <div class="absolute bottom-4 left-6 text-white">
+                                            <span class="text-[10px] font-bold uppercase tracking-widest bg-brand-500 px-2.5 py-1 rounded-md">${count} Items Available</span>
+                                            <h3 class="font-serif text-2xl font-bold mt-2">${cat}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="p-6 flex justify-between items-center">
+                                        <span class="text-xs font-semibold text-stone-600 uppercase tracking-widest">Shop Collection</span>
+                                        <div class="w-9 h-9 rounded-full bg-stone-100 group-hover:bg-brand-500 group-hover:text-white flex items-center justify-center transition">
+                                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        /* --- VIEW 4: PRODUCT DETAILS --- */
+        let detailSelectedSize = null;
+        let detailSelectedColor = null;
+        let detailQuantity = 1;
+
+        function renderProductDetailView(productId) {
+            const products = getProducts();
+            const product = products.find(p => p.id === productId) || products[0];
+            if (!product) return `<div class="p-20 text-center font-serif text-2xl">Product not found.</div>`;
+
+            // Default selections if not set
+            detailSelectedSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'Standard';
+            detailSelectedColor = product.colors && product.colors.length > 0 ? product.colors[0] : 'Default';
+            detailQuantity = 1;
+
+            const hasDiscount = product.discountPrice && product.discountPrice < product.price;
+            const effectivePrice = hasDiscount ? product.discountPrice : product.price;
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="text-xs text-stone-500 mb-8 flex items-center gap-2">
+                        <a href="#" onclick="router('home')" class="hover:text-brand-500">Home</a> / 
+                        <a href="#" onclick="router('shop', '${product.category}')" class="hover:text-brand-500">${product.category}</a> / 
+                        <span class="text-lux-dark font-medium">${product.name}</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <!-- Product Image Gallery -->
+                        <div class="space-y-4">
+                            <div class="aspect-[3/4] rounded-3xl overflow-hidden shadow-xl bg-white border border-stone-200">
+                                <img id="main-detail-img" src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+
+                        <!-- Product Info & Actions -->
+                        <div class="space-y-6">
+                            <div>
+                                <span class="bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full inline-block mb-3">${product.category}</span>
+                                <h1 class="font-serif text-3xl sm:text-4xl font-bold text-lux-dark">${product.name}</h1>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <span class="text-3xl font-bold text-brand-600">${formatINR(effectivePrice)}</span>
+                                ${hasDiscount ? `<span class="text-lg text-stone-400 line-through">${formatINR(product.price)}</span>` : ''}
+                                ${product.stock > 0 ? '<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">In Stock</span>' : '<span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">Out of Stock</span>'}
+                            </div>
+
+                            <p class="text-stone-600 text-sm leading-relaxed border-y border-stone-200 py-4 font-light">
+                                ${product.description}
+                            </p>
+
+                            <!-- Size Selection -->
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-2">Select Size: <span id="selected-size-label" class="text-brand-600 font-bold">${detailSelectedSize}</span></label>
+                                <div class="flex flex-wrap gap-3">
+                                    ${product.sizes.map((s, idx) => `
+                                        <button onclick="setDetailSize('${s}', this)" class="detail-size-btn px-4 py-2.5 rounded-xl border text-xs font-medium transition ${idx === 0 ? 'bg-brand-500 text-white border-brand-500 shadow' : 'border-stone-300 text-stone-700 hover:border-brand-500'}">${s}</button>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <!-- Color Selection -->
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-2">Select Color: <span id="selected-color-label" class="text-brand-600 font-bold">${detailSelectedColor}</span></label>
+                                <div class="flex flex-wrap gap-3">
+                                    ${product.colors.map((c, idx) => `
+                                        <button onclick="setDetailColor('${c}', this)" class="detail-color-btn px-4 py-2 rounded-xl border text-xs font-medium transition ${idx === 0 ? 'bg-lux-dark text-white border-lux-dark shadow' : 'border-stone-300 text-stone-700 hover:border-lux-dark'}">${c}</button>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <!-- Quantity Selector -->
+                            <div class="flex items-center gap-4 pt-2">
+                                <label class="text-xs font-semibold uppercase tracking-wider text-stone-700">Quantity:</label>
+                                <div class="flex items-center border border-stone-300 rounded-xl overflow-hidden bg-white">
+                                    <button onclick="updateDetailQty(-1)" class="px-4 py-2 text-stone-600 hover:bg-stone-100 transition"><i class="fa-solid fa-minus text-xs"></i></button>
+                                    <span id="detail-qty-val" class="px-4 py-2 font-bold text-sm text-lux-dark">1</span>
+                                    <button onclick="updateDetailQty(1)" class="px-4 py-2 text-stone-600 hover:bg-stone-100 transition"><i class="fa-solid fa-plus text-xs"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                                <button onclick="addToCartFromDetail('${product.id}')" class="flex-1 bg-lux-dark hover:bg-black text-white font-medium py-4 rounded-2xl transition shadow-xl text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                                </button>
+                                <button onclick="orderNowWhatsApp('${product.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-4 rounded-2xl transition shadow-xl text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                                    <i class="fa-brands fa-whatsapp text-lg"></i> Order on WhatsApp
+                                </button>
+                            </div>
+
+                            <!-- Extra guarantees -->
+                            <div class="grid grid-cols-3 gap-4 pt-6 border-t border-stone-200 text-center">
+                                <div class="text-[11px] text-stone-500"><i class="fa-solid fa-rotate-left text-brand-500 text-base block mb-1"></i>7-Day Easy Returns</div>
+                                <div class="text-[11px] text-stone-500"><i class="fa-solid fa-shield-halved text-brand-500 text-base block mb-1"></i>Secure Quality Check</div>
+                                <div class="text-[11px] text-stone-500"><i class="fa-solid fa-truck text-brand-500 text-base block mb-1"></i>Pan-India Shipping</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setDetailSize(size, btn) {
+            detailSelectedSize = size;
+            document.getElementById('selected-size-label').innerText = size;
+            document.querySelectorAll('.detail-size-btn').forEach(b => {
+                b.classList.remove('bg-brand-500', 'text-white', 'border-brand-500', 'shadow');
+                b.classList.add('border-stone-300', 'text-stone-700');
+            });
+            btn.classList.add('bg-brand-500', 'text-white', 'border-brand-500', 'shadow');
+            btn.classList.remove('border-stone-300', 'text-stone-700');
+        }
+
+        function setDetailColor(color, btn) {
+            detailSelectedColor = color;
+            document.getElementById('selected-color-label').innerText = color;
+            document.querySelectorAll('.detail-color-btn').forEach(b => {
+                b.classList.remove('bg-lux-dark', 'text-white', 'border-lux-dark', 'shadow');
+                b.classList.add('border-stone-300', 'text-stone-700');
+            });
+            btn.classList.add('bg-lux-dark', 'text-white', 'border-lux-dark', 'shadow');
+            btn.classList.remove('border-stone-300', 'text-stone-700');
+        }
+
+        function updateDetailQty(change) {
+            detailQuantity += change;
+            if (detailQuantity < 1) detailQuantity = 1;
+            document.getElementById('detail-qty-val').innerText = detailQuantity;
+        }
+
+        function addToCartFromDetail(productId) {
+            const products = getProducts();
+            const p = products.find(prod => prod.id === productId);
+            if (!p) return;
+
+            const cart = getCart();
+            const existingIndex = cart.findIndex(item => item.id === p.id && item.size === detailSelectedSize && item.color === detailSelectedColor);
+
+            const finalPrice = (p.discountPrice && p.discountPrice < p.price) ? p.discountPrice : p.price;
+
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += detailQuantity;
+            } else {
+                cart.push({
+                    id: p.id,
+                    name: p.name,
+                    price: finalPrice,
+                    image: p.image,
+                    size: detailSelectedSize,
+                    color: detailSelectedColor,
+                    quantity: detailQuantity,
+                    category: p.category
+                });
+            }
+
+            saveCart(cart);
+            showToast(`Added ${detailQuantity}x ${p.name} (${detailSelectedSize}) to cart!`);
+        }
+
+        function quickAddToCart(productId) {
+            const products = getProducts();
+            const p = products.find(prod => prod.id === productId);
+            if (!p) return;
+
+            const cart = getCart();
+            const defaultSize = p.sizes && p.sizes.length ? p.sizes[0] : 'Standard';
+            const defaultColor = p.colors && p.colors.length ? p.colors[0] : 'Default';
+            const finalPrice = (p.discountPrice && p.discountPrice < p.price) ? p.discountPrice : p.price;
+
+            const existingIndex = cart.findIndex(item => item.id === p.id && item.size === defaultSize && item.color === defaultColor);
+
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += 1;
+            } else {
+                cart.push({
+                    id: p.id,
+                    name: p.name,
+                    price: finalPrice,
+                    image: p.image,
+                    size: defaultSize,
+                    color: defaultColor,
+                    quantity: 1,
+                    category: p.category
+                });
+            }
+
+            saveCart(cart);
+            showToast(`Added ${p.name} to cart!`);
+        }
+
+        /* --- VIEW 5: CART --- */
+        function renderCartView() {
+            const cart = getCart();
+
+            if (cart.length === 0) {
+                return `
+                    <div class="max-w-4xl mx-auto px-4 py-20 text-center">
+                        <div class="w-20 h-20 rounded-full bg-stone-100 text-stone-400 mx-auto flex items-center justify-center text-3xl mb-4"><i class="fa-solid fa-bag-shopping"></i></div>
+                        <h2 class="font-serif text-3xl font-bold text-lux-dark">Your Shopping Bag is Empty</h2>
+                        <p class="text-xs text-stone-500 mt-2 mb-8">Explore our exquisite collections and find your signature look.</p>
+                        <button onclick="router('shop')" class="bg-brand-500 hover:bg-brand-600 text-white px-8 py-3.5 rounded-xl font-medium text-xs uppercase tracking-widest shadow transition">
+                            Start Shopping Now
+                        </button>
+                    </div>
+                `;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = subtotal >= 2999 ? 0 : 150;
+            const total = subtotal + shipping;
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="mb-8 border-b border-stone-200 pb-6">
+                        <span class="text-brand-500 text-xs font-bold uppercase tracking-[0.25em] block mb-1">Your Selection</span>
+                        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-lux-dark">Shopping Cart (${cart.reduce((s,i)=>s+i.quantity,0)} items)</h1>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                        <!-- Cart Items List -->
+                        <div class="lg:col-span-2 space-y-4">
+                            ${cart.map((item, index) => `
+                                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-stone-200 flex flex-col sm:flex-row items-center gap-6">
+                                    <img src="${item.image}" alt="${item.name}" class="w-24 h-32 object-cover rounded-xl border border-stone-100">
+                                    <div class="flex-1 text-center sm:text-left">
+                                        <span class="text-[10px] text-stone-400 uppercase tracking-widest">${item.category}</span>
+                                        <h3 class="font-serif font-bold text-base text-lux-dark mt-0.5">${item.name}</h3>
+                                        <div class="flex flex-wrap justify-center sm:justify-start gap-3 mt-2 text-xs text-stone-500">
+                                            <span>Size: <strong class="text-lux-dark">${item.size}</strong></span>
+                                            <span>Color: <strong class="text-lux-dark">${item.color}</strong></span>
+                                        </div>
+                                        <div class="mt-3 font-bold text-brand-600 text-base">${formatINR(item.price)}</div>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-3">
+                                        <button onclick="removeFromCart(${index})" class="text-stone-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-trash-can"></i></button>
+                                        <div class="flex items-center border border-stone-300 rounded-xl overflow-hidden">
+                                            <button onclick="updateCartItemQty(${index}, -1)" class="px-3 py-1 text-stone-600 hover:bg-stone-100"><i class="fa-solid fa-minus text-[10px]"></i></button>
+                                            <span class="px-3 py-1 font-bold text-xs">${item.quantity}</span>
+                                            <button onclick="updateCartItemQty(${index}, 1)" class="px-3 py-1 text-stone-600 hover:bg-stone-100"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Order Summary Card -->
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-stone-200 h-fit space-y-6">
+                            <h3 class="font-serif font-bold text-xl text-lux-dark border-b border-stone-200 pb-4">Order Summary</h3>
+                            <div class="space-y-3 text-sm text-stone-600">
+                                <div class="flex justify-between">
+                                    <span>Subtotal</span>
+                                    <span class="font-bold text-lux-dark">${formatINR(subtotal)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Estimated Shipping</span>
+                                    <span class="font-bold ${shipping === 0 ? 'text-emerald-600' : 'text-lux-dark'}">${shipping === 0 ? 'FREE' : formatINR(shipping)}</span>
+                                </div>
+                                ${subtotal < 2999 ? `<p class="text-[11px] text-brand-600 bg-brand-50 p-2.5 rounded-xl">Add ${formatINR(2999 - subtotal)} more for Free Pan-India Shipping!</p>` : ''}
+                            </div>
+                            <div class="border-t border-stone-200 pt-4 flex justify-between items-center">
+                                <span class="font-serif font-bold text-lg text-lux-dark">Total Amount</span>
+                                <span class="font-bold text-2xl text-brand-600">${formatINR(total)}</span>
+                            </div>
+                            <button onclick="router('checkout')" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-4 rounded-2xl transition shadow-xl text-xs uppercase tracking-widest text-center block">
+                                Proceed to Checkout
+                            </button>
+                            <button onclick="openWhatsAppDirect()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3.5 rounded-2xl transition shadow text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-whatsapp text-base"></i> Quick WhatsApp Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateCartItemQty(index, change) {
+            const cart = getCart();
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            saveCart(cart);
+            renderView();
+        }
+
+        function removeFromCart(index) {
+            const cart = getCart();
+            cart.splice(index, 1);
+            saveCart(cart);
+            renderView();
+            showToast("Item removed from cart.");
+        }
+
+        /* --- VIEW 6: CHECKOUT --- */
+        function renderCheckoutView() {
+            const cart = getCart();
+            if (cart.length === 0) {
+                router('cart');
+                return '';
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = subtotal >= 2999 ? 0 : 150;
+            const total = subtotal + shipping;
+
+            return `
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="mb-8 border-b border-stone-200 pb-6 text-center">
+                        <span class="text-brand-500 text-xs font-bold uppercase tracking-[0.25em] block mb-1">Secure Checkout</span>
+                        <h1 class="font-serif text-3xl font-bold text-lux-dark">Complete Your Order</h1>
+                        <p class="text-xs text-stone-500 mt-1">Orders are securely processed and confirmed via WhatsApp instantly.</p>
+                    </div>
+
+                    <form onsubmit="handleCheckoutSubmit(event)" class="bg-white p-6 sm:p-10 rounded-3xl shadow-sm border border-stone-200 space-y-8">
+                        <div>
+                            <h3 class="font-serif font-bold text-xl text-lux-dark mb-4 flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-full bg-brand-500 text-white text-xs flex items-center justify-center">1</span> 
+                                Customer & Delivery Information
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Full Name *</label>
+                                    <input type="text" id="chk-name" required class="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" placeholder="Ananya Sharma">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Phone Number (WhatsApp) *</label>
+                                    <input type="tel" id="chk-phone" required class="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" placeholder="9876543210">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Complete Delivery Address *</label>
+                                    <textarea id="chk-address" rows="3" required class="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" placeholder="House/Flat No., Street, Landmark, City, State, Pincode"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">City *</label>
+                                    <input type="text" id="chk-city" required class="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" placeholder="Jaipur">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Pincode *</label>
+                                    <input type="text" id="chk-pincode" required class="w-full px-4 py-3 bg-stone-50 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" placeholder="302001">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Items Summary Table -->
+                        <div>
+                            <h3 class="font-serif font-bold text-xl text-lux-dark mb-4 flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-full bg-brand-500 text-white text-xs flex items-center justify-center">2</span> 
+                                Order Summary (${cart.length} items)
+                            </h3>
+                            <div class="bg-stone-50 rounded-2xl p-4 space-y-3">
+                                ${cart.map(item => `
+                                    <div class="flex justify-between items-center text-xs text-stone-700 border-b border-stone-200 pb-2">
+                                        <div>
+                                            <span class="font-bold text-lux-dark">${item.name}</span> (${item.size}, ${item.color}) x ${item.quantity}
+                                        </div>
+                                        <div class="font-semibold text-brand-600">${formatINR(item.price * item.quantity)}</div>
+                                    </div>
+                                `).join('')}
+                                <div class="flex justify-between font-bold text-sm text-lux-dark pt-2">
+                                    <span>Total Payable Amount (Shipping: ${shipping === 0 ? 'FREE' : formatINR(shipping)})</span>
+                                    <span class="text-brand-600 text-lg">${formatINR(total)}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method Info -->
+                        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 flex items-center gap-3">
+                            <i class="fa-solid fa-shield-halved text-amber-600 text-xl"></i>
+                            <div>
+                                <strong class="block mb-0.5">Order Confirmation via WhatsApp</strong>
+                                Clicking order will generate your invoice message and instantly connect you with our stylist on WhatsApp to finalize payment & dispatch.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-4 rounded-2xl transition shadow-xl text-sm uppercase tracking-widest flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-xl"></i> Confirm & Send Order on WhatsApp
+                        </button>
+                    </form>
+                </div>
+            `;
+        }
+
+        function handleCheckoutSubmit(event) {
+            event.preventDefault();
+            const cart = getCart();
+            if (cart.length === 0) return;
+
+            const name = document.getElementById('chk-name').value;
+            const phone = document.getElementById('chk-phone').value;
+            const address = document.getElementById('chk-address').value;
+            const city = document.getElementById('chk-city').value;
+            const pincode = document.getElementById('chk-pincode').value;
+
+            const fullAddress = `${address}, ${city} - ${pincode}`;
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = subtotal >= 2999 ? 0 : 150;
+            const total = subtotal + shipping;
+
+            // Save Order to Admin Database
+            const orders = getOrders();
+            const newOrder = {
+                id: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+                customerName: name,
+                phone: phone,
+                address: fullAddress,
+                items: cart,
+                totalAmount: total,
+                date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+                status: 'New'
+            };
+            orders.unshift(newOrder);
+            localStorage.setItem('sajda_orders', JSON.stringify(orders));
+
+            // Generate WhatsApp Pre-filled text as requested
+            const settings = getSettings();
+            const whatsappNumber = settings.whatsappNumber || '919876543210';
+
+            let itemsText = cart.map(i => `• ${i.name} (${i.size}, ${i.color}) x ${i.quantity} = ${formatINR(i.price * i.quantity)}`).join('\n');
+
+            const message = `Hello Sajda Boutique! 🌸\nI would like to place an order for the following items:\n\n*Customer Name:* ${name}\n*Phone Number:* ${phone}\n*Delivery Address:* ${fullAddress}\n\n*Ordered Products:*\n${itemsText}\n\n*Shipping:* ${shipping === 0 ? 'FREE' : formatINR(shipping)}\n*Total Order Amount:* ${formatINR(total)}\n\nPlease confirm order availability and payment details. Thank you!`;
+
+            // Clear Cart
+            localStorage.setItem('sajda_cart', JSON.stringify([]));
+            updateCartBadge();
+
+            // Redirect to Order Confirmation view
+            router('order-confirmation', newOrder.id);
+
+            // Open WhatsApp in new tab after slight delay
+            setTimeout(() => {
+                const encoded = encodeURIComponent(message);
+                window.open(`https://wa.me/${whatsappNumber}?text=${encoded}`, '_blank');
+            }, 800);
+        }
+
+        /* --- VIEW 7: ORDER CONFIRMATION --- */
+        function renderOrderConfirmationView(orderId) {
+            const orders = getOrders();
+            const order = orders.find(o => o.id === orderId) || orders[0];
+
+            return `
+                <div class="max-w-3xl mx-auto px-4 py-16 text-center">
+                    <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-3xl mb-6 shadow-inner"><i class="fa-solid fa-circle-check"></i></div>
+                    <span class="text-brand-500 text-xs font-bold uppercase tracking-[0.25em] block mb-1">Order Placed Successfully</span>
+                    <h1 class="font-serif text-3xl sm:text-4xl font-bold text-lux-dark">Thank You For Your Order!</h1>
+                    <p class="text-xs text-stone-500 mt-2 mb-8">Your order has been recorded and WhatsApp has opened with your invoice details.</p>
+
+                    ${order ? `
+                        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200 text-left space-y-6 mb-8">
+                            <div class="flex flex-col sm:flex-row justify-between border-b border-stone-200 pb-4 gap-2">
+                                <div>
+                                    <span class="text-[10px] text-stone-400 uppercase tracking-widest block">Order ID</span>
+                                    <strong class="text-lux-dark font-serif text-lg">${order.id}</strong>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-stone-400 uppercase tracking-widest block">Order Date</span>
+                                    <strong class="text-lux-dark">${order.date}</strong>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-stone-400 uppercase tracking-widest block">Status</span>
+                                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">${order.status}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-serif font-bold text-sm text-lux-dark mb-3">Delivery Address</h4>
+                                <p class="text-xs text-stone-600">${order.address} (Ph: ${order.phone})</p>
+                            </div>
+                            <div>
+                                <h4 class="font-serif font-bold text-sm text-lux-dark mb-3">Items Ordered</h4>
+                                <div class="space-y-2">
+                                    ${order.items.map(i => `
+                                        <div class="flex justify-between text-xs text-stone-700 bg-stone-50 p-3 rounded-xl">
+                                            <span>${i.name} (${i.size}, ${i.color}) x ${i.quantity}</span>
+                                            <strong class="text-brand-600">${formatINR(i.price * i.quantity)}</strong>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div class="border-t border-stone-200 pt-4 flex justify-between items-center">
+                                <span class="font-serif font-bold text-base text-lux-dark">Total Amount Paid / Payable</span>
+                                <span class="font-bold text-xl text-brand-600">${formatINR(order.totalAmount)}</span>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="router('shop')" class="bg-brand-500 hover:bg-brand-600 text-white px-8 py-3.5 rounded-xl font-medium text-xs uppercase tracking-widest shadow transition">
+                            Continue Shopping
+                        </button>
+                        <button onclick="openWhatsAppDirect()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 rounded-xl font-medium text-xs uppercase tracking-widest shadow transition flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp"></i> Chat with Stylist Again
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* --- VIEW 8: ABOUT US --- */
+        function renderAboutView() {
+            const settings = getSettings();
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+                        <div class="space-y-6">
+                            <span class="text-brand-500 text-xs font-bold uppercase tracking-[0.25em] block">Our Heritage & Story</span>
+                            <h1 class="font-serif text-3xl sm:text-5xl font-bold text-lux-dark leading-tight">Crafting Timeless Elegance Since Inception</h1>
+                            <p class="text-stone-600 text-sm sm:text-base leading-relaxed font-light">
+                                ${settings.aboutText}
+                            </p>
+                            <p class="text-stone-600 text-sm leading-relaxed font-light">
+                                At Sajda Boutique, every garment is meticulously designed to honor traditional Indian artistry while catering to the sophisticated aesthetics of today's woman. From royal velvet anarkalis to lightweight organza lehengas, we ensure pristine craftsmanship and personalized service.
+                            </p>
+                            <div class="grid grid-cols-3 gap-6 pt-4 border-t border-stone-200 text-center">
+                                <div>
+                                    <h3 class="font-serif text-3xl font-bold text-brand-600">100%</h3>
+                                    <span class="text-[11px] text-stone-500 uppercase">Handcrafted</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-serif text-3xl font-bold text-brand-600">5000+</h3>
+                                    <span class="text-[11px] text-stone-500 uppercase">Delighted Clients</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-serif text-3xl font-bold text-brand-600">50+</h3>
+                                    <span class="text-[11px] text-stone-500 uppercase">Artisan Guilds</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl">
+                                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=600" alt="Boutique Craft" class="w-full h-full object-cover">
+                            </div>
+                            <div class="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl mt-8">
+                                <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=600" alt="Fashion Design" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* --- VIEW 9: CONTACT US --- */
+        function renderContactView() {
+            const settings = getSettings();
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-brand-500 text-xs font-bold uppercase tracking-[0.25em] block mb-2">We Are Here For You</span>
+                        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-lux-dark">Get in Touch with Sajda</h1>
+                        <p class="text-xs text-stone-500 mt-2">Have questions about sizing, custom orders, or shipping? Reach out directly via WhatsApp or visit our boutique.</p>
+                        <div class="w-16 h-0.5 bg-lux-gold mx-auto mt-4"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="bg-white p-8 rounded-3xl shadow-sm border border-stone-200 text-center space-y-4">
+                            <div class="w-14 h-14 rounded-full bg-brand-100 text-brand-600 mx-auto flex items-center justify-center text-2xl"><i class="fa-solid fa-location-dot"></i></div>
+                            <h3 class="font-serif font-bold text-lg text-lux-dark">Visit Boutique</h3>
+                            <p class="text-xs text-stone-500 leading-relaxed">${settings.address}</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl shadow-sm border border-stone-200 text-center space-y-4">
+                            <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-2xl"><i class="fa-brands fa-whatsapp"></i></div>
+                            <h3 class="font-serif font-bold text-lg text-lux-dark">WhatsApp Ordering</h3>
+                            <p class="text-xs text-stone-500 leading-relaxed">${settings.contactNumber}</p>
+                            <button onclick="openWhatsAppDirect()" class="bg-emerald-600 text-white text-xs px-6 py-2.5 rounded-xl font-medium">Chat Now</button>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl shadow-sm border border-stone-200 text-center space-y-4">
+                            <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-700 mx-auto flex items-center justify-center text-2xl"><i class="fa-regular fa-clock"></i></div>
+                            <h3 class="font-serif font-bold text-lg text-lux-dark">Business Hours</h3>
+                            <p class="text-xs text-stone-500 leading-relaxed">${settings.businessHours}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openWhatsAppDirect() {
+            const settings = getSettings();
+            const number = settings.whatsappNumber || '919876543210';
+            const msg = encodeURIComponent("Hello Sajda Boutique! I would like to inquire about your fashion collection.");
+            window.open(`https://wa.me/${number}?text=${msg}`, '_blank');
+        }
+
+        function orderNowWhatsApp(productId) {
+            const products = getProducts();
+            const p = products.find(prod => prod.id === productId);
+            if (!p) return;
+
+            const settings = getSettings();
+            const number = settings.whatsappNumber || '919876543210';
+            const finalPrice = (p.discountPrice && p.discountPrice < p.price) ? p.discountPrice : p.price;
+
+            const msg = encodeURIComponent(`Hello Sajda Boutique! 🌸\nI would like to order this item directly:\n\n*Product Name:* ${p.name}\n*Category:* ${p.category}\n*Size:* ${detailSelectedSize}\n*Color:* ${detailSelectedColor}\n*Quantity:* ${detailQuantity}\n*Price:* ${formatINR(finalPrice * detailQuantity)}\n\nPlease guide me on next steps.`);
+            window.open(`https://wa.me/${number}?text=${msg}`, '_blank');
+        }
+
+        function quickOrderWhatsApp(productId) {
+            const products = getProducts();
+            const p = products.find(prod => prod.id === productId);
+            if (!p) return;
+
+            const settings = getSettings();
+            const number = settings.whatsappNumber || '919876543210';
+            const finalPrice = (p.discountPrice && p.discountPrice < p.price) ? p.discountPrice : p.price;
+            const size = p.sizes && p.sizes.length ? p.sizes[0] : 'Standard';
+            const color = p.colors && p.colors.length ? p.colors[0] : 'Default';
+
+            const msg = encodeURIComponent(`Hello Sajda Boutique! 🌸\nI want to quick-order:\n\n*Product:* ${p.name}\n*Size:* ${size}\n*Color:* ${color}\n*Price:* ${formatINR(finalPrice)}\n\nPlease confirm availability.`);
+            window.open(`https://wa.me/${number}?text=${msg}`, '_blank');
+        }
+
+
+        /* =======================================================
+           --- PRIVATE ADMIN PANEL SYSTEM ---
+           ======================================================= */
+
+        function openAdminAuth() {
+            if (sessionStorage.getItem('sajda_admin_auth') === 'true') {
+                router('admin');
+            } else {
+                document.getElementById('admin-auth-modal').classList.remove('hidden');
+            }
+        }
+
+        function closeAdminAuth() {
+            document.getElementById('admin-auth-modal').classList.add('hidden');
+        }
+
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            const u = document.getElementById('admin-user').value;
+            const p = document.getElementById('admin-pass').value;
+
+            // Secure authentication check
+            if (u === 'admin' && p === 'sajda2026') {
+                sessionStorage.setItem('sajda_admin_auth', 'true');
+                closeAdminAuth();
+                router('admin');
+                showToast("Admin authenticated successfully!");
+            } else {
+                showToast("Invalid admin credentials! Use admin / sajda2026", true);
+            }
+        }
+
+        function adminLogout() {
+            sessionStorage.removeItem('sajda_admin_auth');
+            router('home');
+            showToast("Logged out of Admin portal.");
+        }
+
+        let currentAdminTab = 'products';
+
+        function renderAdminDashboard() {
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                    <!-- Admin Header -->
+                    <div class="bg-lux-dark text-white rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-center gap-6 mb-8 shadow-2xl">
+                        <div>
+                            <div class="flex items-center gap-2 text-lux-gold text-xs font-bold uppercase tracking-widest mb-1">
+                                <i class="fa-solid fa-lock text-[10px]"></i> Secure Admin Portal
+                            </div>
+                            <h1 class="font-serif text-2xl sm:text-3xl font-bold">Sajda Boutique Management</h1>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="router('home')" class="bg-white/10 hover:bg-white/20 text-white text-xs px-4 py-2.5 rounded-xl font-medium transition">
+                                View Storefront
+                            </button>
+                            <button onclick="adminLogout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2.5 rounded-xl font-medium transition">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Admin Navigation Tabs -->
+                    <div class="flex flex-wrap gap-2 border-b border-stone-200 pb-4 mb-8">
+                        <button onclick="switchAdminTab('products')" id="tab-btn-products" class="admin-tab-btn px-6 py-3 rounded-xl font-medium text-xs transition bg-brand-500 text-white shadow">
+                            <i class="fa-solid fa-shirt mr-1.5"></i> Manage Products
+                        </button>
+                        <button onclick="switchAdminTab('categories')" id="tab-btn-categories" class="admin-tab-btn px-6 py-3 rounded-xl font-medium text-xs transition bg-white text-stone-700 border border-stone-200 hover:bg-stone-50">
+                            <i class="fa-solid fa-list mr-1.5"></i> Categories
+                        </button>
+                        <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="admin-tab-btn px-6 py-3 rounded-xl font-medium text-xs transition bg-white text-stone-700 border border-stone-200 hover:bg-stone-50">
+                            <i class="fa-solid fa-bag-shopping mr-1.5"></i> Customer Orders
+                        </button>
+                        <button onclick="switchAdminTab('settings')" id="tab-btn-settings" class="admin-tab-btn px-6 py-3 rounded-xl font-medium text-xs transition bg-white text-stone-700 border border-stone-200 hover:bg-stone-50">
+                            <i class="fa-solid fa-gear mr-1.5"></i> Store Settings & WhatsApp
+                        </button>
+                    </div>
+
+                    <!-- Tab Content Container -->
+                    <div id="admin-tab-content">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- Product Add/Edit Modal -->
+                <div id="product-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+                        <div class="flex justify-between items-center border-b border-stone-200 pb-4 mb-6">
+                            <h3 id="product-modal-title" class="font-serif text-xl font-bold text-lux-dark">Add New Product</h3>
+                            <button onclick="closeProductModal()" class="text-stone-400 hover:text-stone-700 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <form onsubmit="handleSaveProduct(event)" class="space-y-4" id="product-form">
+                            <input type="hidden" id="prod-edit-id">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Product Name *</label>
+                                <input type="text" id="p-name" required class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Category *</label>
+                                    <select id="p-category" required class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                                        <!-- Dynamic categories -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Stock Quantity *</label>
+                                    <input type="number" id="p-stock" required min="0" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" value="10">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Regular Price (₹) *</label>
+                                    <input type="number" id="p-price" required min="1" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Discount Price (₹)</label>
+                                    <input type="number" id="p-discount" min="0" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" placeholder="Leave blank if no discount">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Product Image URL (Placeholder or Photo URL) *</label>
+                                <input type="url" id="p-image" required class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" placeholder="https://images.unsplash.com/...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Description *</label>
+                                <textarea id="p-desc" required rows="3" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500"></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Sizes (comma separated)</label>
+                                    <input type="text" id="p-sizes" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" value="XS, S, M, L, XL">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Colors (comma separated)</label>
+                                    <input type="text" id="p-colors" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" value="Crimson Red, Royal Blue">
+                                </div>
+                            </div>
+                            <div class="flex gap-6 pt-2">
+                                <label class="flex items-center gap-2 text-xs font-semibold text-stone-700 cursor-pointer">
+                                    <input type="checkbox" id="p-featured" class="accent-brand-500 w-4 h-4"> Mark as Featured Product
+                                </label>
+                                <label class="flex items-center gap-2 text-xs font-semibold text-stone-700 cursor-pointer">
+                                    <input type="checkbox" id="p-new" class="accent-brand-500 w-4 h-4"> Mark as New Arrival
+                                </label>
+                            </div>
+                            <div class="pt-4 border-t border-stone-200 flex justify-end gap-3">
+                                <button type="button" onclick="closeProductModal()" class="px-5 py-2.5 bg-stone-100 text-stone-700 rounded-xl text-xs font-medium">Cancel</button>
+                                <button type="submit" class="px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-medium shadow">Save Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initAdminDashboard() {
+            switchAdminTab(currentAdminTab);
+        }
+
+        function switchAdminTab(tab) {
+            currentAdminTab = tab;
+            document.querySelectorAll('.admin-tab-btn').forEach(b => {
+                b.className = "admin-tab-btn px-6 py-3 rounded-xl font-medium text-xs transition bg-white text-stone-700 border border-stone-200 hover:bg-stone-50";
+            });
+            const activeBtn = document.getElementById(`tab-btn-${tab}`);
+            if(activeBtn) {
+                activeBtn.className = "admin-tab-btn px-6 py-3 rounded-xl font-medium text-xs transition bg-brand-500 text-white shadow";
+            }
+
+            const container = document.getElementById('admin-tab-content');
+            if (!container) return;
+
+            if (tab === 'products') container.innerHTML = renderAdminProductsTab();
+            if (tab === 'categories') container.innerHTML = renderAdminCategoriesTab();
+            if (tab === 'orders') container.innerHTML = renderAdminOrdersTab();
+            if (tab === 'settings') container.innerHTML = renderAdminSettingsTab();
+        }
+
+        /* --- ADMIN TAB 1: PRODUCTS --- */
+        function renderAdminProductsTab() {
+            const products = getProducts();
+            return `
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200 space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div>
+                            <h3 class="font-serif font-bold text-xl text-lux-dark">Product Catalog (${products.length})</h3>
+                            <p class="text-xs text-stone-500">Add, edit, remove or update product prices, stocks and photos.</p>
+                        </div>
+                        <button onclick="openProductModalForAdd()" class="bg-brand-500 hover:bg-brand-600 text-white text-xs px-5 py-3 rounded-xl font-medium shadow flex items-center gap-2">
+                            <i class="fa-solid fa-plus text-xs"></i> Add New Product
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-stone-50 text-stone-700 uppercase tracking-wider border-b border-stone-200">
+                                <tr>
+                                    <th class="p-3">Product</th>
+                                    <th class="p-3">Category</th>
+                                    <th class="p-3">Price</th>
+                                    <th class="p-3">Stock</th>
+                                    <th class="p-3">Labels</th>
+                                    <th class="p-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-stone-200">
+                                ${products.map(p => `
+                                    <tr class="hover:bg-stone-50/50">
+                                        <td class="p-3 flex items-center gap-3">
+                                            <img src="${p.image}" class="w-10 h-12 object-cover rounded-lg border border-stone-200">
+                                            <div>
+                                                <strong class="font-serif text-lux-dark text-sm block">${p.name}</strong>
+                                                <span class="text-[10px] text-stone-400">ID: ${p.id}</span>
+                                            </div>
+                                        </td>
+                                        <td class="p-3 text-stone-600">${p.category}</td>
+                                        <td class="p-3 font-semibold text-brand-600">${formatINR(p.discountPrice || p.price)} ${p.discountPrice ? `<span class="text-[10px] text-stone-400 line-through block">${formatINR(p.price)}</span>` : ''}</td>
+                                        <td class="p-3"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${p.stock > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${p.stock} in stock</span></td>
+                                        <td class="p-3">
+                                            <div class="flex gap-1">
+                                                ${p.isFeatured ? '<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[9px] font-bold">Featured</span>' : ''}
+                                                ${p.isNew ? '<span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-[9px] font-bold">New</span>' : ''}
+                                            </div>
+                                        </td>
+                                        <td class="p-3 text-right space-x-2">
+                                            <button onclick="openProductModalForEdit('${p.id}')" class="text-stone-600 hover:text-brand-600 p-1.5"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <button onclick="deleteProduct('${p.id}')" class="text-stone-400 hover:text-red-600 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openProductModalForAdd() {
+            document.getElementById('product-modal-title').innerText = "Add New Product";
+            document.getElementById('product-form').reset();
+            document.getElementById('prod-edit-id').value = '';
+            
+            // Populate category select
+            const catSelect = document.getElementById('p-category');
+            const categories = getCategories();
+            catSelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function openProductModalForEdit(id) {
+            const products = getProducts();
+            const p = products.find(prod => prod.id === id);
+            if (!p) return;
+
+            document.getElementById('product-modal-title').innerText = "Edit Product";
+            document.getElementById('prod-edit-id').value = p.id;
+            document.getElementById('p-name').value = p.name;
+            document.getElementById('p-stock').value = p.stock;
+            document.getElementById('p-price').value = p.price;
+            document.getElementById('p-discount').value = p.discountPrice || '';
+            document.getElementById('p-image').value = p.image;
+            document.getElementById('p-desc').value = p.description;
+            document.getElementById('p-sizes').value = p.sizes ? p.sizes.join(', ') : '';
+            document.getElementById('p-colors').value = p.colors ? p.colors.join(', ') : '';
+            document.getElementById('p-featured').checked = p.isFeatured;
+            document.getElementById('p-new').checked = p.isNew;
+
+            const catSelect = document.getElementById('p-category');
+            const categories = getCategories();
+            catSelect.innerHTML = categories.map(c => `<option value="${c}" ${c === p.category ? 'selected' : ''}>${c}</option>`).join('');
+
+            document.getElementById('product-modal').classList.add('hidden'); // flicker fix
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        function handleSaveProduct(event) {
+            event.preventDefault();
+            const editId = document.getElementById('prod-edit-id').value;
+            const name = document.getElementById('p-name').value;
+            const category = document.getElementById('p-category').value;
+            const stock = Number(document.getElementById('p-stock').value);
+            const price = Number(document.getElementById('p-price').value);
+            const discVal = document.getElementById('p-discount').value;
+            const discountPrice = discVal ? Number(discVal) : 0;
+            const image = document.getElementById('p-image').value;
+            const description = document.getElementById('p-desc').value;
+            const sizes = document.getElementById('p-sizes').value.split(',').map(s => s.trim()).filter(Boolean);
+            const colors = document.getElementById('p-colors').value.split(',').map(c => c.trim()).filter(Boolean);
+            const isFeatured = document.getElementById('p-featured').checked;
+            const isNew = document.getElementById('p-new').checked;
+
+            let products = getProducts();
+
+            if (editId) {
+                const index = products.findIndex(p => p.id === editId);
+                if (index > -1) {
+                    products[index] = {
+                        ...products[index],
+                        name, category, stock, price, discountPrice, image, description, sizes, colors, isFeatured, isNew
+                    };
+                }
+                showToast("Product updated successfully!");
+            } else {
+                const newProd = {
+                    id: 'p_' + Date.now(),
+                    name, category, stock, price, discountPrice, image, description, sizes, colors, isFeatured, isNew
+                };
+                products.unshift(newProd);
+                showToast("New product added successfully!");
+            }
+
+            localStorage.setItem('sajda_products', JSON.stringify(products));
+            closeProductModal();
+            renderAdminDashboard();
+        }
+
+        function deleteProduct(id) {
+            if (confirm("Are you sure you want to delete this product?")) {
+                let products = getProducts();
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('sajda_products', JSON.stringify(products));
+                showToast("Product deleted.");
+                renderAdminDashboard();
+            }
+        }
+
+        /* --- ADMIN TAB 2: CATEGORIES --- */
+        function renderAdminCategoriesTab() {
+            const categories = getCategories();
+            return `
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200 space-y-6 max-w-2xl">
+                    <div>
+                        <h3 class="font-serif font-bold text-xl text-lux-dark">Manage Categories</h3>
+                        <p class="text-xs text-stone-500">Add or delete store categories.</p>
+                    </div>
+
+                    <form onsubmit="handleAddCategory(event)" class="flex gap-3">
+                        <input type="text" id="new-cat-name" required placeholder="New category name..." class="flex-1 px-4 py-3 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                        <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white px-6 py-3 rounded-xl text-xs font-medium uppercase tracking-wider shadow">Add Category</button>
+                    </form>
+
+                    <div class="space-y-2 pt-4">
+                        ${categories.map(cat => `
+                            <div class="flex justify-between items-center p-3.5 bg-stone-50 rounded-2xl border border-stone-200">
+                                <span class="font-serif font-bold text-lux-dark text-sm">${cat}</span>
+                                <button onclick="deleteCategory('${cat}')" class="text-stone-400 hover:text-red-600 text-sm"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleAddCategory(event) {
+            event.preventDefault();
+            const name = document.getElementById('new-cat-name').value.trim();
+            if (!name) return;
+
+            let categories = getCategories();
+            if (categories.includes(name)) {
+                showToast("Category already exists!", true);
+                return;
+            }
+
+            categories.push(name);
+            localStorage.setItem('sajda_categories', JSON.stringify(categories));
+            showToast("Category added successfully!");
+            renderAdminDashboard();
+        }
+
+        function deleteCategory(cat) {
+            if (confirm(`Are you sure you want to delete category "${cat}"?`)) {
+                let categories = getCategories();
+                categories = categories.filter(c => c !== cat);
+                localStorage.setItem('sajda_categories', JSON.stringify(categories));
+                showToast("Category deleted.");
+                renderAdminDashboard();
+            }
+        }
+
+        /* --- ADMIN TAB 3: CUSTOMER ORDERS --- */
+        function renderAdminOrdersTab() {
+            const orders = getOrders();
+            return `
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200 space-y-6">
+                    <div>
+                        <h3 class="font-serif font-bold text-xl text-lux-dark">Customer Orders (${orders.length})</h3>
+                        <p class="text-xs text-stone-500">Review incoming customer orders, customer numbers, addresses, items and update status.</p>
+                    </div>
+
+                    ${orders.length === 0 ? `
+                        <div class="text-center py-12 text-stone-400 text-xs">No customer orders recorded yet.</div>
+                    ` : `
+                        <div class="space-y-4">
+                            ${orders.map(o => `
+                                <div class="bg-stone-50 border border-stone-200 rounded-2xl p-6 space-y-4">
+                                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-stone-200 pb-4">
+                                        <div>
+                                            <span class="text-[10px] text-stone-400 uppercase tracking-widest">Order ID: <strong class="text-lux-dark font-serif text-base">${o.id}</strong></span>
+                                            <span class="text-xs text-stone-500 block">Placed on: ${o.date}</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <label class="text-xs font-semibold text-stone-700">Status:</label>
+                                            <select onchange="updateOrderStatus('${o.id}', this.value)" class="bg-white border border-stone-300 rounded-xl px-3 py-1.5 text-xs font-bold text-lux-dark focus:outline-none focus:border-brand-500">
+                                                ${['New', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map(st => `
+                                                    <option value="${st}" ${o.status === st ? 'selected' : ''}>${st}</option>
+                                                `).join('')}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-stone-700">
+                                        <div>
+                                            <strong class="text-lux-dark block mb-1">Customer Details:</strong>
+                                            <p>${o.customerName} | Phone: <a href="https://wa.me/${o.phone}" target="_blank" class="text-emerald-600 font-bold underline">${o.phone}</a></p>
+                                            <p class="mt-1 text-stone-500">Address: ${o.address}</p>
+                                        </div>
+                                        <div>
+                                            <strong class="text-lux-dark block mb-1">Order Summary:</strong>
+                                            <div class="space-y-1">
+                                                ${o.items.map(i => `
+                                                    <div>• ${i.name} (${i.size}, ${i.color}) x ${i.quantity} = ${formatINR(i.price * i.quantity)}</div>
+                                                `).join('')}
+                                            </div>
+                                            <div class="mt-2 font-bold text-brand-600 text-sm">Total Amount: ${formatINR(o.totalAmount)}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            let orders = getOrders();
+            const idx = orders.findIndex(o => o.id === orderId);
+            if (idx > -1) {
+                orders[idx].status = newStatus;
+                localStorage.setItem('sajda_orders', JSON.stringify(orders));
+                showToast(`Order ${orderId} status updated to ${newStatus}`);
+                renderAdminDashboard();
+            }
+        }
+
+        /* --- ADMIN TAB 4: STORE SETTINGS & WHATSAPP NUMBER --- */
+        function renderAdminSettingsTab() {
+            const s = getSettings();
+            return `
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200 space-y-6 max-w-3xl">
+                    <div>
+                        <h3 class="font-serif font-bold text-xl text-lux-dark">Store Settings & WhatsApp Configuration</h3>
+                        <p class="text-xs text-stone-500">Update your boutique contact details, business hours, and the main WhatsApp ordering number.</p>
+                    </div>
+
+                    <form onsubmit="handleSaveSettings(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Boutique Name *</label>
+                                <input type="text" id="st-name" required value="${s.boutiqueName}" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">WhatsApp Number (e.g. 919876543210) *</label>
+                                <input type="text" id="st-whatsapp" required value="${s.whatsappNumber}" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500" placeholder="919876543210">
+                                <span class="text-[10px] text-stone-400 mt-1 block">Include country code without '+' sign (e.g. 91 for India).</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Contact Phone Number *</label>
+                                <input type="text" id="st-contact" required value="${s.contactNumber}" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Instagram Handle</label>
+                                <input type="text" id="st-insta" value="${s.instagram}" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Boutique Address *</label>
+                            <input type="text" id="st-address" required value="${s.address}" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">Business Hours *</label>
+                                <input type="text" id="st-hours" required value="${s.businessHours}" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1">About Us / Footer Description *</label>
+                            <textarea id="st-about" required rows="3" class="w-full px-4 py-2.5 border border-stone-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">${s.aboutText}</textarea>
+                        </div>
+                        <div class="pt-4 border-t border-stone-200 flex justify-end">
+                            <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white font-medium px-8 py-3 rounded-xl transition text-xs uppercase tracking-widest shadow">
+                                Save Store Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        function handleSaveSettings(event) {
+            event.preventDefault();
+            const newSettings = {
+                boutiqueName: document.getElementById('st-name').value,
+                whatsappNumber: document.getElementById('st-whatsapp').value,
+                contactNumber: document.getElementById('st-contact').value,
+                instagram: document.getElementById('st-insta').value,
+                address: document.getElementById('st-address').value,
+                businessHours: document.getElementById('st-hours').value,
+                aboutText: document.getElementById('st-about').value
+            };
+
+            localStorage.setItem('sajda_settings', JSON.stringify(newSettings));
+            showToast("Store settings & WhatsApp number updated successfully!");
+            applySettings();
+            renderAdminDashboard();
+        }
+
+        // Initialize application on load
+        window.addEventListener('DOMContentLoaded', () => {
+            applySettings();
+            router('home');
+        });
+    </script>
+
+<!-- Supabase live backend integration -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function () {
+  const SAJDA_SUPABASE_URL = "https://rdqbbpkltenrdmyysbw.supabase.co";
+  const SAJDA_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ON2DSPLOs9mFc_Xf-RbjsQ_4uJpgXTQ";
+
+  if (!window.supabase || !SAJDA_SUPABASE_URL || !SAJDA_SUPABASE_PUBLISHABLE_KEY) return;
+
+  const sb = window.supabase.createClient(SAJDA_SUPABASE_URL, SAJDA_SUPABASE_PUBLISHABLE_KEY);
+  window.sajdaSupabase = sb;
+  window.sajdaSupabaseConfigured = true;
+
+  const cache = {
+    products: () => JSON.parse(localStorage.getItem('sajda_products') || '[]'),
+    categories: () => JSON.parse(localStorage.getItem('sajda_categories') || '[]'),
+    settings: () => JSON.parse(localStorage.getItem('sajda_settings') || '{}'),
+    orders: () => JSON.parse(localStorage.getItem('sajda_orders') || '[]')
+  };
+  const put = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+  async function isAdmin() {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) return false;
+    const { data, error } = await sb.from('admin_users').select('user_id, role').eq('user_id', user.id).maybeSingle();
+    return !error && !!data && data.role === 'admin';
+  }
+  window.sajdaIsAdmin = isAdmin;
+
+  async function syncRemote(includeOrders = false) {
+    try {
+      const [p, c, s] = await Promise.all([
+        sb.from('products').select('id,data').order('created_at', { ascending: false }),
+        sb.from('categories').select('id,name').order('created_at', { ascending: true }),
+        sb.from('settings').select('id,data').eq('id', 1).maybeSingle()
+      ]);
+      if (!p.error && p.data && p.data.length) put('sajda_products', p.data.map(x => x.data));
+      if (!c.error && c.data && c.data.length) put('sajda_categories', c.data.map(x => x.name));
+      if (!s.error && s.data && s.data.data) put('sajda_settings', s.data.data);
+      if (includeOrders) {
+        const o = await sb.from('orders').select('id,data').order('created_at', { ascending: false });
+        if (!o.error && o.data) put('sajda_orders', o.data.map(x => x.data));
+      }
+    } catch (e) { console.warn('Sajda remote sync failed:', e); }
+  }
+  window.sajdaSyncRemote = syncRemote;
+
+  async function seedIfEmpty() {
+    if (!(await isAdmin())) return;
+    try {
+      const p = await sb.from('products').select('id').limit(1);
+      if (!p.error && (!p.data || !p.data.length)) {
+        const rows = cache.products().map(x => ({ id: x.id, data: x }));
+        if (rows.length) await sb.from('products').upsert(rows);
+      }
+      const c = await sb.from('categories').select('id').limit(1);
+      if (!c.error && (!c.data || !c.data.length)) {
+        const rows = cache.categories().map((name, i) => ({ id: 'cat_' + (i + 1), name }));
+        if (rows.length) await sb.from('categories').upsert(rows);
+      }
+      const s = await sb.from('settings').select('id').eq('id', 1).maybeSingle();
+      if (!s.error && !s.data) await sb.from('settings').upsert({ id: 1, data: cache.settings() });
+      await syncRemote(true);
+    } catch (e) { console.warn('Sajda seed failed:', e); }
+  }
+
+  async function requireAdmin() {
+    if (await isAdmin()) return true;
+    showToast('Admin access required.', true);
+    return false;
+  }
+
+  // Replace insecure demo login with Supabase Auth.
+  window.handleAdminLogin = async function (event) {
+    event.preventDefault();
+    const email = document.getElementById('admin-user').value.trim();
+    const password = document.getElementById('admin-pass').value;
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error || !data.user || !(await isAdmin())) {
+      await sb.auth.signOut();
+      showToast('Invalid admin email/password or admin access not enabled.', true);
+      return;
+    }
+    sessionStorage.setItem('sajda_admin_auth', 'true');
+    await seedIfEmpty();
+    closeAdminAuth();
+    await syncRemote(true);
+    router('admin');
+    showToast('Admin authenticated successfully!');
+  };
+
+  window.adminLogout = async function () {
+    await sb.auth.signOut();
+    sessionStorage.removeItem('sajda_admin_auth');
+    router('home');
+    showToast('Logged out of Admin portal.');
+  };
+
+  window.openAdminAuth = async function () {
+    if (await isAdmin()) router('admin');
+    else document.getElementById('admin-auth-modal').classList.remove('hidden');
+  };
+
+  // Keep admin route gated by real Supabase identity.
+  const originalRenderView = window.renderView;
+  window.renderView = function () {
+    if (currentRoute === 'admin' && window.sajdaSupabaseConfigured) {
+      isAdmin().then(ok => {
+        if (!ok) { router('home'); document.getElementById('admin-auth-modal').classList.remove('hidden'); }
+        else { mainAdminRender(); }
+      });
+      return;
+    }
+    return originalRenderView();
+  };
+  function mainAdminRender() {
+    const main = document.getElementById('main-content');
+    applySettings();
+    main.innerHTML = renderAdminDashboard();
+    initAdminDashboard();
+    updateCartBadge();
+  }
+
+  window.handleSaveProduct = async function (event) {
+    event.preventDefault();
+    if (!(await requireAdmin())) return;
+    const editId = document.getElementById('prod-edit-id').value;
+    const name = document.getElementById('p-name').value;
+    const category = document.getElementById('p-category').value;
+    const stock = Number(document.getElementById('p-stock').value);
+    const price = Number(document.getElementById('p-price').value);
+    const discVal = document.getElementById('p-discount').value;
+    const discountPrice = discVal ? Number(discVal) : 0;
+    const image = document.getElementById('p-image').value;
+    const description = document.getElementById('p-desc').value;
+    const sizes = document.getElementById('p-sizes').value.split(',').map(s => s.trim()).filter(Boolean);
+    const colors = document.getElementById('p-colors').value.split(',').map(c => c.trim()).filter(Boolean);
+    const isFeatured = document.getElementById('p-featured').checked;
+    const isNew = document.getElementById('p-new').checked;
+    let products = cache.products();
+    let product;
+    if (editId) {
+      const i = products.findIndex(p => p.id === editId);
+      if (i < 0) return;
+      product = { ...products[i], name, category, stock, price, discountPrice, image, description, sizes, colors, isFeatured, isNew };
+      products[i] = product;
+    } else {
+      product = { id: 'p_' + Date.now(), name, category, stock, price, discountPrice, image, description, sizes, colors, isFeatured, isNew };
+      products.unshift(product);
+    }
+    put('sajda_products', products);
+    const { error } = await sb.from('products').upsert({ id: product.id, data: product });
+    if (error) { showToast('Could not save product: ' + error.message, true); return; }
+    closeProductModal(); renderAdminDashboard(); showToast(editId ? 'Product updated successfully!' : 'New product added successfully!');
+  };
+
+  window.deleteProduct = async function (id) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    if (!(await requireAdmin())) return;
+    const { error } = await sb.from('products').delete().eq('id', id);
+    if (error) { showToast('Could not delete product: ' + error.message, true); return; }
+    put('sajda_products', cache.products().filter(p => p.id !== id));
+    renderAdminDashboard(); showToast('Product deleted.');
+  };
+
+  window.handleAddCategory = async function (event) {
+    event.preventDefault();
+    if (!(await requireAdmin())) return;
+    const name = document.getElementById('new-cat-name').value.trim();
+    if (!name) return;
+    const categories = cache.categories();
+    if (categories.includes(name)) { showToast('Category already exists!', true); return; }
+    const id = 'cat_' + Date.now();
+    const { error } = await sb.from('categories').insert({ id, name });
+    if (error) { showToast('Could not add category: ' + error.message, true); return; }
+    categories.push(name); put('sajda_categories', categories); renderAdminDashboard(); showToast('Category added successfully!');
+  };
+
+  window.deleteCategory = async function (cat) {
+    if (!confirm(`Are you sure you want to delete category "${cat}"?`)) return;
+    if (!(await requireAdmin())) return;
+    const { error } = await sb.from('categories').delete().eq('name', cat);
+    if (error) { showToast('Could not delete category: ' + error.message, true); return; }
+    put('sajda_categories', cache.categories().filter(c => c !== cat)); renderAdminDashboard(); showToast('Category deleted.');
+  };
+
+  window.updateOrderStatus = async function (orderId, newStatus) {
+    if (!(await requireAdmin())) return;
+    const orders = cache.orders();
+    const idx = orders.findIndex(o => o.id === orderId);
+    if (idx < 0) return;
+    orders[idx].status = newStatus;
+    const { error } = await sb.from('orders').upsert({ id: orderId, data: orders[idx] });
+    if (error) { showToast('Could not update order: ' + error.message, true); return; }
+    put('sajda_orders', orders); renderAdminDashboard(); showToast(`Order ${orderId} status updated to ${newStatus}`);
+  };
+
+  window.handleSaveSettings = async function (event) {
+    event.preventDefault();
+    if (!(await requireAdmin())) return;
+    const newSettings = {
+      boutiqueName: document.getElementById('st-name').value,
+      whatsappNumber: document.getElementById('st-whatsapp').value,
+      contactNumber: document.getElementById('st-contact').value,
+      instagram: document.getElementById('st-insta').value,
+      address: document.getElementById('st-address').value,
+      businessHours: document.getElementById('st-hours').value,
+      aboutText: document.getElementById('st-about').value
+    };
+    const { error } = await sb.from('settings').upsert({ id: 1, data: newSettings });
+    if (error) { showToast('Could not save settings: ' + error.message, true); return; }
+    put('sajda_settings', newSettings); applySettings(); renderAdminDashboard(); showToast('Store settings & WhatsApp number updated successfully!');
+  };
+
+  // Save customer orders remotely; keep WhatsApp flow.
+  window.handleCheckoutSubmit = async function (event) {
+    event.preventDefault();
+    const cart = getCart();
+    if (!cart.length) return;
+    const name = document.getElementById('chk-name').value;
+    const phone = document.getElementById('chk-phone').value;
+    const address = document.getElementById('chk-address').value;
+    const city = document.getElementById('chk-city').value;
+    const pincode = document.getElementById('chk-pincode').value;
+    const fullAddress = `${address}, ${city} - ${pincode}`;
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shipping = subtotal >= 2999 ? 0 : 150;
+    const total = subtotal + shipping;
+    const newOrder = {
+      id: 'ORD-' + Math.floor(100000 + Math.random() * 900000), customerName: name, phone,
+      address: fullAddress, items: cart, totalAmount: total,
+      date: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }), status:'New'
+    };
+    const orders = cache.orders(); orders.unshift(newOrder); put('sajda_orders', orders);
+    const settings = getSettings();
+    const whatsappNumber = settings.whatsappNumber || '919876543210';
+    const itemsText = cart.map(i => `• ${i.name} (${i.size}, ${i.color}) x ${i.quantity} = ${formatINR(i.price * i.quantity)}`).join('\n');
+    const message = `Hello Sajda Boutique! 🌸\nI would like to place an order for the following items:\n\n*Customer Name:* ${name}\n*Phone Number:* ${phone}\n*Delivery Address:* ${fullAddress}\n\n*Ordered Products:*\n${itemsText}\n\n*Shipping:* ${shipping === 0 ? 'FREE' : formatINR(shipping)}\n*Total Order Amount:* ${formatINR(total)}\n\nPlease confirm order availability and payment details. Thank you!`;
+    const waWin = window.open('about:blank', '_blank');
+    const { error } = await sb.from('orders').insert({ id: newOrder.id, data: newOrder });
+    if (error) console.error('Remote order insert failed:', error);
+    localStorage.setItem('sajda_cart', JSON.stringify([])); updateCartBadge(); router('order-confirmation', newOrder.id);
+    const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    if (waWin) waWin.location.href = waUrl; else setTimeout(() => window.open(waUrl, '_blank'), 200);
+  };
+
+  // Update login UI labels from username to email.
+  document.addEventListener('DOMContentLoaded', async () => {
+    const label = document.querySelector('#admin-auth-modal label[for="admin-user"]');
+    const input = document.getElementById('admin-user');
+    if (label) label.textContent = 'Admin Email';
+    if (input) { input.type = 'email'; input.placeholder = 'admin@example.com'; }
+    const demo = document.querySelector('#admin-auth-modal .text-center.mt-2 span');
+    if (demo) demo.textContent = 'Use the admin email and password created in Supabase.';
+    await syncRemote(false);
+    if (await isAdmin()) { sessionStorage.setItem('sajda_admin_auth','true'); await seedIfEmpty(); await syncRemote(true); }
+    router('home');
+  });
+})();
+</script>
+
+</body>
+</html>
